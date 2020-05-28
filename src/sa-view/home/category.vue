@@ -1,6 +1,6 @@
 <style scoped>
 .td-img {
-  width: 160px;
+  width: 60px;
   height: 60px;
   cursor: pointer;
   vertical-align: middle;
@@ -23,7 +23,7 @@
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 160px;
+  width: 60px;
   height: 60px;
   line-height: 60px;
   text-align: center;
@@ -31,7 +31,7 @@
   border: 1px dashed #d9d9d9;
 }
 .avatar {
-  width: 160px;
+  width: 60px;
   height: 60px;
   display: block;
 }
@@ -48,7 +48,7 @@
             {{ props.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="图片" width="200px">
+        <el-table-column label="图片" width="100px">
           <template slot-scope="s">
             <img :src="s.row.imgPath" class="td-img" title="点击预览" />
           </template>
@@ -117,7 +117,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="名称：">
-          <el-input v-model="m.content" style="width: 200px;"></el-input>
+          <el-input v-model="m.kindName" style="width: 200px;"></el-input>
         </el-form-item>
         <el-form-item>
           <span class="c-label"></span>
@@ -138,7 +138,7 @@ export default {
       dataList: [], // 数据集合
       m: {
         // 添加信息
-        content: '',
+        kindName: '',
         imgPath: '',
       },
       curr_m: null, // 当前操作的 m
@@ -148,7 +148,7 @@ export default {
     // 刷新
     f5: function() {
       request({
-        url: '/api/manage/notice',
+        url: '/api/manage/kind',
         method: 'get',
       }).then((res) => {
         this.dataList = res.data.data; // 数据
@@ -157,12 +157,12 @@ export default {
     // 保存
     add: function() {
       request({
-        url: '/api/manage/notice',
+        url: '/api/manage/kind',
         method: 'post',
         data: this.m,
       })
         .then((res) => {
-          let newdata = res.data.data;
+          let newdata = res.data;
           console.log(newdata);
           this.sa.alert(
             '添加成功',
@@ -185,28 +185,29 @@ export default {
       });
     },
     // 删除
-    del: function(data) {
-      this.sa.confirm(
-        '是否删除，此操作不可撤销',
-        function() {
-          request({
-            url: '/api/manage/notice/' + data._id,
-            method: 'delete',
-          })
-            .then(() => {
-              this.sa.arrayDelete(this.dataList, data);
-              this.sa.ok('删除成功');
-            })
-            .catch((err) => {
-              this.sa.error(err.msg);
-            });
-        }.bind(this)
-      );
+    del: function() {
+      this.$notify.error({
+        title: '很抱歉',
+        message: '我们还未开发此接口',
+      });
+      // this.sa.confirm(
+      //   '是否删除，此操作不可撤销',
+      //   function() {
+      //     this.sa.ajax2(
+      //       '/SysSwiper/delete?id=' + data.id,
+      //       function() {
+      //         this.sa.ok('删除成功');
+      //         this.sa.arrayDelete(this.dataList, data);
+      //       }.bind(this)
+      //     );
+      //   }.bind(this)
+      // );
     },
     handleAvatarSuccess(res) {
       let surl =
-        'https://static-resource-1256396014.cos.ap-nanjing.myqcloud.com/img/public/';
-      this.m.imgPath = surl + res.data.src;
+        'http://static-resource-1256396014.picnj.myqcloud.com/img/public/';
+      let eurl = '/shui_ying';
+      this.m.imgPath = surl + res.data.src + eurl;
     },
   },
   created() {

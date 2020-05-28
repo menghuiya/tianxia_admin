@@ -51,13 +51,12 @@
             {{ props.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="昵称" prop="userName" width="200px">
+        <el-table-column label="发送者" prop="send" width="200px">
         </el-table-column>
-        <el-table-column label="_id" prop="_id"></el-table-column>
-        <el-table-column label="余额" prop="balance"></el-table-column>
-        <el-table-column label="注册方式" prop="create_type"
-          >普通注册</el-table-column
-        >
+        <el-table-column label="接收者" prop="receive" width="200px">
+        </el-table-column>
+        <el-table-column label="room_id" prop="roomId"></el-table-column>
+        <el-table-column label="发送内容" prop="msg"></el-table-column>
         <el-table-column label="注册于" prop="createTime">
           <template slot-scope="s">
             {{ sa.forDate(s.row.createTime, 2) }}
@@ -123,7 +122,7 @@ export default {
     // 数据刷新
     f5: function() {
       request({
-        url: '/api/manage/user/' + this.p.pageNo,
+        url: '/api/manage/record/' + this.p.pageNo,
         method: 'get',
       })
         .then((res) => {
@@ -151,7 +150,7 @@ export default {
         '是否删除，此操作不可撤销',
         function() {
           request({
-            url: '/api/manage/user/' + data._id,
+            url: '/api/manage/record/' + data._id,
             method: 'delete',
           })
             .then(() => {

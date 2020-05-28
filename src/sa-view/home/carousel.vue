@@ -1,12 +1,12 @@
 <style scoped>
 .td-img {
-  width: 160px;
-  height: 60px;
+  width: 200px;
+  height: 80px;
   cursor: pointer;
   vertical-align: middle;
 }
 .c-panel-add .td-img {
-  width: 60px;
+  width: 80px;
 }
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
@@ -23,16 +23,16 @@
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 160px;
-  height: 60px;
-  line-height: 60px;
+  width: 200px;
+  height: 80px;
+  line-height: 80px;
   text-align: center;
   background: #d9d9d9;
   border: 1px dashed #d9d9d9;
 }
 .avatar {
-  width: 160px;
-  height: 60px;
+  width: 200px;
+  height: 80px;
   display: block;
 }
 </style>
@@ -58,12 +58,14 @@
             {{ s.row.kindName }}
           </template>
         </el-table-column>
-        <el-table-column label="排序" width="60px">
-          1
-        </el-table-column>
-        <el-table-column label="_id">
+        <el-table-column label="商品_id">
           <template slot-scope="s">
-            {{ s.row._id }}
+            {{ s.row.commodityId }}
+          </template>
+        </el-table-column>
+        <el-table-column label="跳转链接">
+          <template slot-scope="s">
+            {{ s.row.url }}
           </template>
         </el-table-column>
         <el-table-column label="创建时间" width="150px">
@@ -71,7 +73,7 @@
             sa.forDate(s.row.createTime, 2)
           }}</template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="150px">
+        <el-table-column label="操作" fixed="right" width="200px">
           <template slot-scope="s">
             <el-badge
               class="item"
@@ -116,8 +118,11 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="名称：">
-          <el-input v-model="m.content" style="width: 200px;"></el-input>
+        <el-form-item label="跳转商品id：">
+          <el-input v-model="m.commodityId" style="width: 200px;"></el-input>
+        </el-form-item>
+        <el-form-item label="跳转链接：">
+          <el-input v-model="m.url" style="width: 200px;"></el-input>
         </el-form-item>
         <el-form-item>
           <span class="c-label"></span>
@@ -138,8 +143,9 @@ export default {
       dataList: [], // 数据集合
       m: {
         // 添加信息
-        content: '',
+        commodityId: '',
         imgPath: '',
+        url: '',
       },
       curr_m: null, // 当前操作的 m
     };
@@ -148,7 +154,7 @@ export default {
     // 刷新
     f5: function() {
       request({
-        url: '/api/manage/notice',
+        url: '/api/manage/carousel',
         method: 'get',
       }).then((res) => {
         this.dataList = res.data.data; // 数据
@@ -157,18 +163,18 @@ export default {
     // 保存
     add: function() {
       request({
-        url: '/api/manage/notice',
+        url: '/api/manage/carousel',
         method: 'post',
         data: this.m,
       })
         .then((res) => {
-          let newdata = res.data.data;
+          let newdata = res.data;
           console.log(newdata);
           this.sa.alert(
             '添加成功',
             function() {
-              this.dataList.push(newdata);
-              this.m.kindName = '';
+              this.f5();
+              this.m.commodityId = '';
               this.m.imgPath = '';
             }.bind(this)
           );
@@ -190,7 +196,7 @@ export default {
         '是否删除，此操作不可撤销',
         function() {
           request({
-            url: '/api/manage/notice/' + data._id,
+            url: '/api/manage/carousel/' + data._id,
             method: 'delete',
           })
             .then(() => {

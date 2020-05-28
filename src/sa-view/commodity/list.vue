@@ -1,64 +1,59 @@
+<style scoped></style>
+
 <template>
   <div class="vue-box">
     <div class="c-panel">
       <!-- 参数栏 -->
-      <div class="c-title">用户列表</div>
+      <div class="c-title">检索参数</div>
       <el-form :inline="true" size="mini">
-        <el-form-item label="用户昵称：">
-          <el-input v-model="p.username" placeholder="模糊查询"></el-input>
+        <el-form-item label="商品编号：">
+          <el-input v-model="p.id" type="number"></el-input>
         </el-form-item>
-        <el-form-item label="注册日期：">
-          <el-date-picker
-            v-model="p.start_time"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="开始日期"
-          ></el-date-picker>
-          -
-          <el-date-picker
-            v-model="p.end_time"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="结束日期"
-          ></el-date-picker>
+        <el-form-item label="标题：">
+          <el-input v-model="p.title" placeholder="模糊查询"></el-input>
         </el-form-item>
-        <el-form-item style="min-width: 0px;">
-          <el-button
-            type="primary"
-            icon="el-icon-search"
-            @click="
-              p.pageNo = 1;
-              f5();
-            "
+        <el-form-item style="min-width: 10px;">
+          <el-button type="primary" icon="el-icon-search" @click="f5"
             >查询</el-button
           >
         </el-form-item>
         <br />
-        <el-form-item label="综合排序：" class="s-radio-text">
+        <el-form-item label="综合排序：">
           <el-radio-group v-model="p.sort_type">
-            <el-radio :label="1">注册时间</el-radio>
-            <el-radio :label="2">最近登录</el-radio>
-            <el-radio :label="3">登陆次数</el-radio>
-            <el-radio :label="4">最近签到</el-radio>
-            <el-radio :label="5">签到次数</el-radio>
+            <el-radio :label="0">发表时间</el-radio>
+            <el-radio :label="1">喜欢数</el-radio>
+            <el-radio :label="2">点击数</el-radio>
+            <el-radio :label="3">分享数</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
-      <!-- <div class="c-title">数据列表</div> -->
-      <el-table :data="dataList" size="mini">
+      <!-- 数据列表 -->
+      <!-- <h4 class="c-title">列表</h4> -->
+      <el-table class="data-table" :data="dataList" size="mini">
         <el-table-column label="编号" width="70px">
           <template slot-scope="props">
             {{ props.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="昵称" prop="userName" width="200px">
+        <el-table-column
+          label="商品描述"
+          prop="description"
+          width="400px"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column label="发表人" prop="owner.userName"></el-table-column>
+        <el-table-column
+          label="分类id"
+          prop="kind"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column label="价格/元" prop="price"></el-table-column>
+        <el-table-column label="是否卖出" prop="isSale">
+          <template slot-scope="s">
+            {{ s.row.isSale }}
+          </template>
         </el-table-column>
-        <el-table-column label="_id" prop="_id"></el-table-column>
-        <el-table-column label="余额" prop="balance"></el-table-column>
-        <el-table-column label="注册方式" prop="create_type"
-          >普通注册</el-table-column
-        >
-        <el-table-column label="注册于" prop="createTime">
+        <el-table-column label="发表于" prop="createTime">
           <template slot-scope="s">
             {{ sa.forDate(s.row.createTime, 2) }}
           </template>
@@ -72,10 +67,10 @@
           <template slot-scope="s">
             <el-button
               class="c-btn"
-              type="success"
-              icon="el-icon-view"
-              @click="get(s.row)"
-              >详情</el-button
+              type="primary"
+              icon="el-icon-edit"
+              @click="update(s.row)"
+              >修改</el-button
             >
             <el-button
               class="c-btn"
@@ -100,6 +95,8 @@
         </el-button-group>
       </div>
     </div>
+
+    <!-- 增改组件 -->
   </div>
 </template>
 
@@ -110,12 +107,14 @@ export default {
     return {
       p: {
         // 查询参数
-        username: '',
+        id: '',
+        title: '',
+        sort_type: 0,
         pageNo: 1,
         pageSize: 10,
       },
-      dataCount: 1,
-      dataList: [],
+      dataCount: 0, // 数据总数
+      dataList: [], // 数据集合
       isType: 1, //1代表是下一页 0代表上一页
     };
   },
@@ -123,7 +122,7 @@ export default {
     // 数据刷新
     f5: function() {
       request({
-        url: '/api/manage/user/' + this.p.pageNo,
+        url: '/api/manage/commodity/' + this.p.pageNo,
         method: 'get',
       })
         .then((res) => {
@@ -145,13 +144,24 @@ export default {
           }
         });
     },
+    // 增加
+    add: function() {
+      // this.$refs['add-or-update'].open(0);
+    },
+    // 修改
+    update: function() {
+      this.$notify.error({
+        title: '很抱歉',
+        message: '我们还未开发此接口',
+      });
+    },
     // 删除
     del: function(data) {
       this.sa.confirm(
         '是否删除，此操作不可撤销',
         function() {
           request({
-            url: '/api/manage/user/' + data._id,
+            url: '/api/manage/commodity/' + data._id,
             method: 'delete',
           })
             .then(() => {
@@ -163,19 +173,6 @@ export default {
             });
         }.bind(this)
       );
-    },
-    // 查看
-    get: function(data) {
-      var str = '<div>';
-      str += '<p>编号：' + data._id + '</p>';
-      str += '<p>昵称：' + data.userName + '</p>';
-      str += '<p>性别：未知</p>';
-      str +=
-        '<p>当前状态：<b>' + (data.status == 1 ? '正常' : '禁用') + '</b></p>';
-      str += '<p>注册方式：普通注册</p>';
-      str += '<p>注册时间：' + data.createTime + '</p>';
-      str += '</div>';
-      this.sa.alert(str);
     },
     nextPage() {
       this.isType = 1;
@@ -191,12 +188,7 @@ export default {
     },
   },
   created: function() {
-    // this.f5();
-  },
-  beforeMount() {
     this.f5();
   },
 };
 </script>
-
-<style></style>

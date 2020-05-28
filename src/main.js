@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from 'vue';
+import App from './App.vue';
+import store from './store';
 
 Vue.config.productionTip = false;
 
-
-// 安装 element-ui 
+// 安装 element-ui
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
@@ -22,8 +22,8 @@ import './static/sa.css';
 import SaAdminInIt from './sa-resources/sa-admin-init.js';
 Vue.prototype.SaAdminInIt = SaAdminInIt;
 
-
-// 打开vue 
+// 打开vue
 new Vue({
-	render: h => h(App)
-}).$mount('#app')
+  store,
+  render: (h) => h(App),
+}).$mount('#app');
