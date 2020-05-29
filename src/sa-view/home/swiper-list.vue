@@ -53,9 +53,9 @@
             <img :src="s.row.imgPath" class="td-img" title="点击预览" />
           </template>
         </el-table-column>
-        <el-table-column label="名称" width="100px">
+        <el-table-column label="内容" width="200px">
           <template slot-scope="s">
-            {{ s.row.kindName }}
+            {{ s.row.content }}
           </template>
         </el-table-column>
         <el-table-column label="排序" width="60px">
@@ -116,7 +116,7 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="名称：">
+        <el-form-item label="内容：">
           <el-input v-model="m.content" style="width: 200px;"></el-input>
         </el-form-item>
         <el-form-item>
